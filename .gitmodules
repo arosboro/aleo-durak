@@ -1,0 +1,3 @@
+[submodule "deps/aleo_bitwise_stack"]
+	path = deps/crypto/aleo_bitwise_stack
+	url = https://github.com/arosboro/aleo_bitwise_stack
