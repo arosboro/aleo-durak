@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 import { RouterLink, RouterView } from "vue-router";
 import { computed } from "vue";
 // https://github.com/devilwjp/veaury#react-in-vue---basic-usage
@@ -7,21 +7,41 @@ import { applyPureReactInVue } from "veaury";
 import { WalletProvider as WalletProviderReact } from "@demox-labs/aleo-wallet-adapter-react";
 import { WalletModalProvider as WalletModalProviderReact } from "@demox-labs/aleo-wallet-adapter-reactui";
 import { LeoWalletAdapter as LeoWalletAdapterReact } from "@demox-labs/aleo-wallet-adapter-leo";
+import { WalletMultiButton as WalletMultiButtonReact } from "@demox-labs/aleo-wallet-adapter-reactui";
 import {
   DecryptPermission,
   WalletAdapterNetwork,
 } from "@demox-labs/aleo-wallet-adapter-base";
 
-import Introduction from "./components/IntroMessage.vue";
+import IntroMessage from "./components/IntroMessage.vue";
 
 const WalletProvider = applyPureReactInVue(WalletProviderReact);
 const WalletModalProvider = applyPureReactInVue(WalletModalProviderReact);
+const WalletMultiButton = applyPureReactInVue(WalletMultiButtonReact);
 
-const wallets = computed(() => [
-  new LeoWalletAdapterReact({
-    appName: "Дурак",
-  }),
-]);
+export default {
+  name: "App",
+  components: {
+    RouterLink,
+    RouterView,
+    IntroMessage,
+    WalletProvider,
+    WalletModalProvider,
+    WalletMultiButton,
+  },
+  setup() {
+    const wallets = computed(() => [
+      new LeoWalletAdapterReact({
+        appName: "Дурак",
+      }),
+    ]);
+    return {
+      DecryptPermission,
+      WalletAdapterNetwork,
+      wallets,
+    };
+  },
+};
 </script>
 
 <template>
@@ -33,6 +53,9 @@ const wallets = computed(() => [
   >
     <WalletModalProvider>
       <section :class="$route.path === '/' ? 'full' : 'lowprofile'">
+        <div class="wallet-modal-button">
+          <WalletMultiButton class="wallet-multi-button" />
+        </div>
         <header>
           <img
             alt="Vue logo"
@@ -43,8 +66,7 @@ const wallets = computed(() => [
           />
 
           <div class="wrapper">
-            <Introduction msg="Дурак" v-show="$route.path === '/'" />
-
+            <IntroMessage msg="Дурак" v-show="$route.path === '/'" />
             <nav>
               <RouterLink to="/">Home</RouterLink>
               <RouterLink to="/durak">Дурак</RouterLink>
@@ -59,7 +81,16 @@ const wallets = computed(() => [
 </template>
 
 <style scoped>
-@import "@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css";
+.full .wallet-modal-button {
+  display: none;
+}
+
+.wallet-modal-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+}
 
 .full header {
   line-height: 1.5;

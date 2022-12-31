@@ -16,7 +16,9 @@ export const usePlayerStore = defineStore("player", () => {
   const address = ref("");
   const dealer = ref(false);
   const ready = ref(false);
+  const defender = ref(false);
+  const attacker = ref(false);
   const random_seed = ref(0);
 
-  return { address, dealer, ready, random_seed };
+  return { address, dealer, ready, defender, attacker, random_seed };
 });

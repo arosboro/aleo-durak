@@ -1,25 +1,12 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h1>Дурак</h1>
+    <CasinoTable />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs } from "vue";
-import { useTableStore } from "@/store/table";
-import { useDeckStore } from "@/store/deck";
-
-export interface Props {
-  msg?: string;
-  labels?: string[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  msg: "hello",
-  labels: () => ["one", "two"],
-});
-
-const { msg, labels } = toRefs(props);
+import CasinoTable from "@/components/CasinoTable.vue";
 </script>
 
 <style>
