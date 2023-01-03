@@ -1,6 +1,11 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 
+// import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
+
+// const { wallet, publicKey, sendTransaction, signAllTransactions, viewKey } =
+//   useWallet();
+
 export interface CasinoTable {
   owner: string;
   gates: number;

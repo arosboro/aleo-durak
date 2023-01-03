@@ -1,44 +1,44 @@
 <script lang="ts">
 import { RouterLink, RouterView } from "vue-router";
-import { computed } from "vue";
+import { computed, h, provide } from "vue";
 // https://github.com/devilwjp/veaury#react-in-vue---basic-usage
 import { applyPureReactInVue } from "veaury";
 // https://github.com/demox-labs/aleo-wallet-adapter#%EF%B8%8Fsetup
-import { WalletProvider as WalletProviderReact } from "@demox-labs/aleo-wallet-adapter-react";
-import { WalletModalProvider as WalletModalProviderReact } from "@demox-labs/aleo-wallet-adapter-reactui";
-import { LeoWalletAdapter as LeoWalletAdapterReact } from "@demox-labs/aleo-wallet-adapter-leo";
-import { WalletMultiButton as WalletMultiButtonReact } from "@demox-labs/aleo-wallet-adapter-reactui";
+import { WalletProvider } from "@demox-labs/aleo-wallet-adapter-react";
+import { WalletModalProvider } from "@demox-labs/aleo-wallet-adapter-reactui";
+import { LeoWalletAdapter } from "@demox-labs/aleo-wallet-adapter-leo";
+import { WalletMultiButton } from "@demox-labs/aleo-wallet-adapter-reactui";
 import {
   DecryptPermission,
   WalletAdapterNetwork,
 } from "@demox-labs/aleo-wallet-adapter-base";
 
-import IntroMessage from "./components/IntroMessage.vue";
+import { VueContainer } from "veaury";
 
-const WalletProvider = applyPureReactInVue(WalletProviderReact);
-const WalletModalProvider = applyPureReactInVue(WalletModalProviderReact);
-const WalletMultiButton = applyPureReactInVue(WalletMultiButtonReact);
+import IntroMessage from "./components/IntroMessage.vue";
 
 export default {
   name: "App",
   components: {
-    RouterLink,
-    RouterView,
-    IntroMessage,
-    WalletProvider,
-    WalletModalProvider,
-    WalletMultiButton,
+    WalletProvider: applyPureReactInVue(WalletProvider),
+    WalletModalProvider: applyPureReactInVue(WalletModalProvider),
+    WalletMultiButton: applyPureReactInVue(WalletMultiButton),
+    VueContainer: applyPureReactInVue(VueContainer),
   },
   setup() {
     const wallets = computed(() => [
-      new LeoWalletAdapterReact({
+      new LeoWalletAdapter({
         appName: "Дурак",
       }),
     ]);
+
     return {
       DecryptPermission,
       WalletAdapterNetwork,
       wallets,
+      IntroMessage,
+      RouterLink,
+      RouterView,
     };
   },
 };
@@ -66,15 +66,31 @@ export default {
           />
 
           <div class="wrapper">
-            <IntroMessage msg="Дурак" v-show="$route.path === '/'" />
+            <VueContainer
+              :component="IntroMessage"
+              msg="Дурак"
+              v-show="$route.path === '/'"
+            />
             <nav>
-              <RouterLink to="/">Home</RouterLink>
-              <RouterLink to="/durak">Дурак</RouterLink>
+              <VueContainer
+                :component="RouterLink"
+                :style="'all: default; margin-right: 1em; padding: 0.5em;'"
+                to="/"
+              >
+                Home
+              </VueContainer>
+              <VueContainer
+                :component="RouterLink"
+                :style="'all: default; margin-right: 1em; padding: 0.5em;'"
+                to="/durak"
+              >
+                Дурак
+              </VueContainer>
             </nav>
           </div>
         </header>
 
-        <RouterView />
+        <VueContainer :component="RouterView" :wallets="wallets" />
       </section>
     </WalletModalProvider>
   </WalletProvider>
@@ -206,7 +222,7 @@ nav a:first-of-type {
 
   nav {
     text-align: left;
-    margin-left: -1rem;
+    margin-left: 1rem;
     font-size: 1rem;
 
     padding: 1rem 0;

@@ -1,24 +1,43 @@
-import { ref } from "vue";
 import { defineStore } from "pinia";
 
-export interface Player {
+export const usePlayerStore = defineStore("player", {
+  // state
+  state: () => {
+    return {
+      playerList: [] as PlayerInfo[],
+      player: null as PlayerInfo | null,
+    };
+  },
+  // getters
+  getters: {
+    playerList: (state) => state.playerList,
+    player: (state) => state.player,
+  },
+  // actions
+  actions: {
+    addPlayer(player: PlayerInfo) {
+      this.playerList.push(player);
+    },
+    setPlayer(player: PlayerInfo) {
+      this.player = player;
+    },
+    updatePlayer(player: PlayerInfo) {
+      this.playerList = this.playerList.map((p) => {
+        if (p.address === player.address) {
+          return player;
+        }
+        return p;
+      });
+    },
+  },
+});
+
+export interface PlayerInfo {
   address: string;
   dealer: boolean;
   ready: boolean;
   defender: boolean;
   attacker: boolean;
-  random_seed: number;
+  random_seed_hash: string | null;
+  random_seed: number | null;
 }
-
-export type PlayerList = Player[];
-
-export const usePlayerStore = defineStore("player", () => {
-  const address = ref("");
-  const dealer = ref(false);
-  const ready = ref(false);
-  const defender = ref(false);
-  const attacker = ref(false);
-  const random_seed = ref(0);
-
-  return { address, dealer, ready, defender, attacker, random_seed };
-});

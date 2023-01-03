@@ -16,9 +16,14 @@
     "@demox-labs/aleo-wallet-adapter-leo": "^0.0.10",
     "@demox-labs/aleo-wallet-adapter-react": "^0.0.11",
     "@demox-labs/aleo-wallet-adapter-reactui": "^0.0.23",
+    "@highlightjs/vue-plugin": "^2.1.0",
+    "highlight.js": "^11.7.0",
     "pinia": "^2.0.28",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "veaury": "^2.3.11",
     "vue": "^3.2.45",
+    "vue-hooks": "^0.3.2",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
