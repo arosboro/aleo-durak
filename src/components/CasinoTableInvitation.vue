@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, inject, watch } from "vue";
+import { computed, ref } from "vue";
 import {
   useTableInvitationStore,
   type Address,
@@ -9,12 +9,19 @@ import IconError from "./icons/IconError.vue";
 import IconValid from "./icons/IconValid.vue";
 import "highlight.js/lib/common";
 import hljsVuePlugin from "@highlightjs/vue-plugin";
-import type { LeoWalletAdapter } from "@demox-labs/aleo-wallet-adapter-leo";
+import { PublicKeyInput } from "@/react_app/PublicKeyInput";
+import { ExecuteTransactionButton } from "@/react_app/ExecuteTransactionButton";
+import { applyPureReactInVue } from "veaury";
+
+const VuePublicKeyInput = applyPureReactInVue(PublicKeyInput);
+const VueExecuteTransactionButton = applyPureReactInVue(
+  ExecuteTransactionButton
+);
 
 const highlightjs = hljsVuePlugin.component;
 
 const store = useTableInvitationStore();
-const player00 = ref(store.player00);
+// const player00 = ref(store.player00);
 const player01 = ref(store.player01);
 const player02 = ref(store.player02);
 const player03 = ref(store.player03);
@@ -23,9 +30,9 @@ const player05 = ref(store.player05);
 const player06 = ref(store.player06);
 const player07 = ref(store.player07);
 
-defineProps<{
-  wallets: LeoWalletAdapter[];
-}>();
+const random_seed = computed(() => {
+  return Math.floor(Math.random() * 100);
+});
 
 const allValid = computed(() => {
   return (
@@ -92,29 +99,15 @@ function burnToPlayer(index: number) {
       player07.value = store.burn_address;
       break;
   }
-
-  // Watch LeoWalletAdapter public key
-  watch(
-    () => publicKey,
-    (newPublicKey) => {
-      store.$patch({ player00: newPublicKey });
-      player00.value = newPublicKey;
-    }
-  );
 }
 </script>
 
 <template>
   <section>
     <form class="table">
-      <div class="field table__player00">
-        <label :for="player00?.toString()">Player 1</label>
-        <input
-          :id="player00?.toString()"
-          readonly
-          type="text"
-          v-model="player00"
-        />
+      <div class="field table__player01">
+        <label>Player 1</label>
+        <VuePublicKeyInput />
       </div>
       <div class="field table__player01">
         <label :for="player01?.toString()">Player 2</label>
@@ -197,7 +190,17 @@ function burnToPlayer(index: number) {
           v-model="player07"
         />
       </div>
-      <button type="submit">Create Table</button>
+      <VueExecuteTransactionButton
+        label="Create Table"
+        :arg0="random_seed"
+        :arg1="player01"
+        :arg2="player02"
+        :arg3="player03"
+        :arg4="player04"
+        :arg5="player05"
+        :arg6="player06"
+        :arg7="player07"
+      />
     </form>
     <div class="wrapper">
       <i class="validation valid" v-show="allValid">
@@ -209,7 +212,7 @@ function burnToPlayer(index: number) {
       <highlightjs
         autodetect
         language="bash"
-        :code="`slingshot execute aleo_casino_table main ${player01} ${player02} ${player03} ${player04} ${player05} ${player06} ${player07}`"
+        :code="`slingshot execute aleo_casino_table main ${random_seed} ${player01} ${player02} ${player03} ${player04} ${player05} ${player06} ${player07}`"
       />
     </div>
   </section>
