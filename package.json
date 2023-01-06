@@ -9,7 +9,10 @@
     "test:unit": "vitest --environment jsdom --root src/",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "build:aleo_bitwise_stack": "leo build --path deps/crypto/aleo_bitwise_stack",
+    "build:aleo_casino_table": "leo build --path deps/crypto/aleo_casino_table",
+    "slingshot": "npm run build:aleo_bitwise_stack; npm run build:aleo_casino_table; slingshot node start --path deps/crypto/aleo_bitwise_stack/build"
   },
   "dependencies": {
     "@demox-labs/aleo-wallet-adapter-base": "^0.0.11",
