@@ -1,4 +1,4 @@
-import type { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren, ReactElement } from "react";
 import React, { useMemo } from "react";
 import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
 
@@ -65,5 +65,5 @@ export const ExecuteTransactionButton: FC<ExecuteTransactionButtonProps> = ({
     <button className={"transaction-button " + className} onClick={onClick}>
       {label}
     </button>
-  );
+  ) as ReactElement;
 };

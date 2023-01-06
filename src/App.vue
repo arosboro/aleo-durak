@@ -1,6 +1,6 @@
 <script lang="ts">
 import { RouterLink, RouterView } from "vue-router";
-import { computed, h, provide } from "vue";
+import { computed } from "vue";
 // https://github.com/devilwjp/veaury#react-in-vue---basic-usage
 import { applyPureReactInVue } from "veaury";
 // https://github.com/demox-labs/aleo-wallet-adapter#%EF%B8%8Fsetup

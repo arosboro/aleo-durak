@@ -5,6 +5,7 @@
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
+    "lib": ["es2020"],
     "paths": {
       "@/*": ["./src/*"]
     }

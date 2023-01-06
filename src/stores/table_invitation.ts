@@ -9,6 +9,8 @@ export interface TableInvitation {
   player05: string | null;
   player06: string | null;
   player07: string | null;
+  random_seed: bigint;
+  set(index: number, address: string | null): string | null;
   burnToPlayer(index: number): void;
 }
 
@@ -23,6 +25,27 @@ export const useTableInvitationStore = defineStore("table_invitation", () => {
   const player05 = ref("" as Address);
   const player06 = ref("" as Address);
   const player07 = ref("" as Address);
+
+  function bit_shuffle(
+    iteration: number,
+    size: number,
+    seed: number,
+    result: bigint
+  ): bigint {
+    if (iteration === size) {
+      return result;
+    }
+    if (seed < 0.5) {
+      result = (result << 1n) | 1n;
+    } else {
+      result = (result << 1n) | 0n;
+    }
+    return bit_shuffle(iteration + 1, size, Math.random(), result);
+  }
+
+  const random_seed = computed(() => {
+    return bit_shuffle(0, 64, Math.random(), BigInt(0));
+  });
 
   function set(index: number, address: string | null) {
     if (index === 0) {
@@ -66,6 +89,7 @@ export const useTableInvitationStore = defineStore("table_invitation", () => {
     player05,
     player06,
     player07,
+    random_seed,
     set,
     burn_address,
   };

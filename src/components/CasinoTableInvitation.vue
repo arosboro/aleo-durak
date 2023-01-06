@@ -1,27 +1,28 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import {
-  useTableInvitationStore,
-  type Address,
-} from "@/stores/table_invitation";
+import { useAccountStore } from "@/stores/account";
+import { useTableInvitationStore } from "@/stores/table_invitation";
 import IconFlame from "./icons/IconFlame.vue";
 import IconError from "./icons/IconError.vue";
 import IconValid from "./icons/IconValid.vue";
 import "highlight.js/lib/common";
 import hljsVuePlugin from "@highlightjs/vue-plugin";
-import { PublicKeyInput } from "@/react_app/PublicKeyInput";
-import { ExecuteTransactionButton } from "@/react_app/ExecuteTransactionButton";
-import { applyPureReactInVue } from "veaury";
+// import { PublicKeyInput } from "@/react_app/PublicKeyInput";
+// import { ExecuteTransactionButton } from "@/react_app/ExecuteTransactionButton";
+// import { applyPureReactInVue } from "veaury";
+// import { Account, NodeConnection } from "@entropy1729/aleo-js";
+import axios from "axios";
 
-const VuePublicKeyInput = applyPureReactInVue(PublicKeyInput);
-const VueExecuteTransactionButton = applyPureReactInVue(
-  ExecuteTransactionButton
-);
+// const VuePublicKeyInput = applyPureReactInVue(PublicKeyInput);
+// const VueExecuteTransactionButton = applyPureReactInVue(
+//   ExecuteTransactionButton
+// );
 
 const highlightjs = hljsVuePlugin.component;
 
+const network = useAccountStore();
 const store = useTableInvitationStore();
-// const player00 = ref(store.player00);
+const player00 = ref(store.player00);
 const player01 = ref(store.player01);
 const player02 = ref(store.player02);
 const player03 = ref(store.player03);
@@ -30,9 +31,16 @@ const player05 = ref(store.player05);
 const player06 = ref(store.player06);
 const player07 = ref(store.player07);
 
-const random_seed = computed(() => {
-  return Math.floor(Math.random() * 100);
-});
+set(0, network.acc00.address.to_string());
+set(1, network.acc01.address.to_string());
+set(2, network.acc02.address.to_string());
+set(3, network.acc03.address.to_string());
+set(4, network.acc04.address.to_string());
+set(5, network.acc05.address.to_string());
+set(6, network.acc06.address.to_string());
+set(7, network.acc07.address.to_string());
+
+const random_seed = ref(store.random_seed);
 
 const allValid = computed(() => {
   return (
@@ -46,28 +54,64 @@ const allValid = computed(() => {
   );
 });
 
-function set(index: number, value: Address) {
+function execute() {
+  const account = network.acc00.account;
+  const arg0 = random_seed.value.toString() + "u64";
+  const arg1 = player01.value?.toString();
+  const arg2 = player02.value?.toString();
+  const arg3 = player03.value?.toString();
+  const arg4 = player04.value?.toString();
+  const arg5 = player05.value?.toString();
+  const arg6 = player06.value?.toString();
+  const arg7 = player07.value?.toString();
+  // TODO: use an environment variable for uri parameter
+  const transaction = {
+    private_key: account.privateKey,
+    program_id: "aleo_casino_table",
+    function_name: "main",
+    inputs: [arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7],
+    additional_fee: 0,
+  };
+  axios
+    .post("http://localhost:4180/testnet3/execute", transaction)
+    .then((res) => {
+      console.log(res);
+    });
+}
+
+function set(index: number, value: string | null) {
   switch (index) {
+    case 0:
+      store.$patch({ player00: value });
+      player00.value = value;
+      break;
     case 1:
       store.$patch({ player01: value });
+      player01.value = value;
       break;
     case 2:
       store.$patch({ player02: value });
+      player02.value = value;
       break;
     case 3:
       store.$patch({ player03: value });
+      player03.value = value;
       break;
     case 4:
       store.$patch({ player04: value });
+      player04.value = value;
       break;
     case 5:
       store.$patch({ player05: value });
+      player05.value = value;
       break;
     case 6:
       store.$patch({ player06: value });
+      player06.value = value;
       break;
     case 7:
       store.$patch({ player07: value });
+      player07.value = value;
       break;
   }
 }
@@ -105,9 +149,18 @@ function burnToPlayer(index: number) {
 <template>
   <section>
     <form class="table">
-      <div class="field table__player01">
+      <!-- <div class="field table__player01">
         <label>Player 1</label>
         <VuePublicKeyInput />
+      </div> -->
+      <div class="field table__player00">
+        <label :for="player00?.toString()">Player 1</label>
+        <input
+          @blur="set(0, player00?.toString() || '')"
+          :id="player00?.toString()"
+          type="text"
+          v-model="player00"
+        />
       </div>
       <div class="field table__player01">
         <label :for="player01?.toString()">Player 2</label>
@@ -136,7 +189,7 @@ function burnToPlayer(index: number) {
           <IconFlame />
         </i>
         <input
-          @blur="set(3, player02?.toString() || '')"
+          @blur="set(3, player03?.toString() || '')"
           :id="player03?.toString()"
           type="text"
           v-model="player03"
@@ -148,7 +201,7 @@ function burnToPlayer(index: number) {
           <IconFlame />
         </i>
         <input
-          @blur="set(4, player02?.toString() || '')"
+          @blur="set(4, player04?.toString() || '')"
           :id="player04?.toString()"
           type="text"
           v-model="player04"
@@ -160,7 +213,7 @@ function burnToPlayer(index: number) {
           <IconFlame />
         </i>
         <input
-          @blur="set(5, player02?.toString() || '')"
+          @blur="set(5, player05?.toString() || '')"
           :id="player05?.toString()"
           type="text"
           v-model="player05"
@@ -172,7 +225,7 @@ function burnToPlayer(index: number) {
           <IconFlame />
         </i>
         <input
-          @blur="set(6, player02?.toString() || '')"
+          @blur="set(6, player06?.toString() || '')"
           :id="player06?.toString()"
           type="text"
           v-model="player06"
@@ -190,7 +243,8 @@ function burnToPlayer(index: number) {
           v-model="player07"
         />
       </div>
-      <VueExecuteTransactionButton
+      <button @click.prevent="execute">Create Table</button>
+      <!-- <VueExecuteTransactionButton
         label="Create Table"
         :arg0="random_seed"
         :arg1="player01"
@@ -200,7 +254,7 @@ function burnToPlayer(index: number) {
         :arg5="player05"
         :arg6="player06"
         :arg7="player07"
-      />
+      /> -->
     </form>
     <div class="wrapper">
       <i class="validation valid" v-show="allValid">
@@ -212,7 +266,7 @@ function burnToPlayer(index: number) {
       <highlightjs
         autodetect
         language="bash"
-        :code="`slingshot execute aleo_casino_table main ${random_seed} ${player01} ${player02} ${player03} ${player04} ${player05} ${player06} ${player07}`"
+        :code="`slingshot execute aleo_casino_table main ${random_seed}u64 ${player01} ${player02} ${player03} ${player04} ${player05} ${player06} ${player07}`"
       />
     </div>
   </section>

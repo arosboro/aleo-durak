@@ -1,4 +1,4 @@
-import type { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren, ReactElement } from "react";
 import React, { useMemo } from "react";
 import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
 
@@ -6,7 +6,6 @@ import "./PublicKeyInput.css";
 
 export type PublicKeyInputProps = PropsWithChildren<{
   className?: string;
-  value?: string;
 }>;
 
 export const PublicKeyInput: FC<PublicKeyInputProps> = ({ className }) => {
@@ -23,5 +22,5 @@ export const PublicKeyInput: FC<PublicKeyInputProps> = ({ className }) => {
       value={base58 || ""}
       placeholder="Not connected"
     />
-  );
+  ) as ReactElement;
 };

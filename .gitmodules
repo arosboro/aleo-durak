@@ -1,3 +1,6 @@
 [submodule "deps/aleo_bitwise_stack"]
 	path = deps/crypto/aleo_bitwise_stack
 	url = https://github.com/arosboro/aleo_bitwise_stack
+[submodule "deps/crypto/aleo_casino_table"]
+	path = deps/crypto/aleo_casino_table
+	url = https://github.com/arosboro/aleo_casino_table
