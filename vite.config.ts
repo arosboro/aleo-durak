@@ -23,4 +23,15 @@ export default defineConfig({
       "@react": fileURLToPath(new URL("./src/react_app", import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:4180",
+        rewrite: (path: string) => path.replace(/^\/api/, ""),
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
+    },
+  },
 });

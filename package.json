@@ -12,7 +12,9 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "build:aleo_bitwise_stack": "leo build --path deps/crypto/aleo_bitwise_stack",
     "build:aleo_casino_table": "leo build --path deps/crypto/aleo_casino_table",
-    "slingshot": "npm run build:aleo_bitwise_stack; npm run build:aleo_casino_table; slingshot node start --path deps/crypto/aleo_bitwise_stack/build"
+    "slingshot": "npm run build:aleo_bitwise_stack; npm run build:aleo_casino_table; slingshot node start --path deps/crypto/aleo_bitwise_stack/build",
+    "deploy:aleo_bitwise_stack": "leo deploy --path deps/crypto/aleo_bitwise_stack/build",
+    "deploy:aleo_casino_table": "leo deploy --path deps/crypto/aleo_casino_table/build"
   },
   "dependencies": {
     "@demox-labs/aleo-wallet-adapter-base": "^0.0.11",

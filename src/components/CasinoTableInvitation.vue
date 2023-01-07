@@ -12,6 +12,7 @@ import hljsVuePlugin from "@highlightjs/vue-plugin";
 // import { applyPureReactInVue } from "veaury";
 // import { Account, NodeConnection } from "@entropy1729/aleo-js";
 import axios from "axios";
+import type { Account } from "@entropy1729/aleo-js";
 
 // const VuePublicKeyInput = applyPureReactInVue(PublicKeyInput);
 // const VueExecuteTransactionButton = applyPureReactInVue(
@@ -54,9 +55,24 @@ const allValid = computed(() => {
   );
 });
 
+function pour(account: Account) {
+  const body = {
+    address: account.address().to_string(),
+    amount: 100,
+  };
+  axios
+    .post("/api/testnet3/faucet/pour", body)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
 function execute() {
   const account = network.acc00.account;
-  const arg0 = random_seed.value.toString() + "u64";
+  const arg0 = random_seed.value?.toString() + "u64";
   const arg1 = player01.value?.toString();
   const arg2 = player02.value?.toString();
   const arg3 = player03.value?.toString();
@@ -66,16 +82,19 @@ function execute() {
   const arg7 = player07.value?.toString();
   // TODO: use an environment variable for uri parameter
   const transaction = {
-    private_key: account.privateKey,
-    program_id: "aleo_casino_table",
+    private_key: account.privateKey().to_string(),
+    program_id: "aleo_casino_table.aleo",
     function_name: "main",
     inputs: [arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7],
     additional_fee: 0,
   };
   axios
-    .post("http://localhost:4180/testnet3/execute", transaction)
+    .post("/api/testnet3/program/execute", transaction)
     .then((res) => {
       console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
     });
 }
 
@@ -266,7 +285,7 @@ function burnToPlayer(index: number) {
       <highlightjs
         autodetect
         language="bash"
-        :code="`slingshot execute aleo_casino_table main ${random_seed}u64 ${player01} ${player02} ${player03} ${player04} ${player05} ${player06} ${player07}`"
+        :code="`slingshot execute aleo_casino_table.aleo main ${random_seed}u64 ${player01} ${player02} ${player03} ${player04} ${player05} ${player06} ${player07}`"
       />
     </div>
   </section>
