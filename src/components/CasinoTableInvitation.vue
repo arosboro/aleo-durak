@@ -92,6 +92,8 @@ function execute() {
     .post("/api/testnet3/program/execute", transaction)
     .then((res) => {
       console.log(res);
+      // Then get the transaction and store the relevant results
+      const transaction_id = res.data.transaction_id;
     })
     .catch((err) => {
       console.log(err);

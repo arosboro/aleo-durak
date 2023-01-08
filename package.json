@@ -12,9 +12,12 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "build:aleo_bitwise_stack": "leo build --path deps/crypto/aleo_bitwise_stack",
     "build:aleo_casino_table": "leo build --path deps/crypto/aleo_casino_table",
+    "pour": "npm run pour:aleo_bitwise_stack; npm run pour:aleo_casino_table",
+    "pour:aleo_bitwise_stack": "slingshot pour aleo1g7lprd8dkrt76jnyrgnw4mw0cpe2u4ckkajs96wqu8xyggze6v8qlegxp3 100",
+    "pour:aleo_casino_table": "slingshot pour aleo1s2hkr9nw7vp2vrlfzewwluqqfg8pfykcffm9gx90qmhk8vrj7urqum9yqn 100",
     "slingshot": "npm run build:aleo_bitwise_stack; npm run build:aleo_casino_table; slingshot node start --path deps/crypto/aleo_bitwise_stack/build",
-    "deploy:aleo_bitwise_stack": "leo deploy --path deps/crypto/aleo_bitwise_stack/build",
-    "deploy:aleo_casino_table": "leo deploy --path deps/crypto/aleo_casino_table/build"
+    "deploy:aleo_bitwise_stack": "slingshot deploy --path deps/crypto/aleo_bitwise_stack/build",
+    "deploy:aleo_casino_table": "slingshot deploy --path deps/crypto/aleo_casino_table/build"
   },
   "dependencies": {
     "@demox-labs/aleo-wallet-adapter-base": "^0.0.11",
