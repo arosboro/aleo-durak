@@ -86,20 +86,37 @@ async function execute() {
     function_name: "main",
     inputs: [arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7],
   };
-  const result = await axios.post("/api/testnet3/program/execute", transaction);
-  // Then get the transaction and store the relevant results
-  // TODO: This fails
-  // const transaction_id = result.data.transaction_id;
-  // const uri = "/api/testnet3/transaction/" + transaction_id;
-  // const tx_result = await axios.get(uri);
-  // console.log(tx_result);
-  // It should show up in unspent records as soon as program/execute resolves
-  setTimeout(async () => {
-    const unspent_records = await axios.post("/api/testnet3/records/unspent", {
-      view_key: account.viewKey().to_string(),
-    });
-    console.log(unspent_records.data.records);
-  }, 1500);
+  try {
+    const result = await axios.post(
+      "/api/testnet3/program/execute",
+      transaction
+    );
+    console.log(result.data.transaction_id);
+    // Then get the transaction and store the relevant results
+    // TODO: This fails
+    const transaction_id = result.data.transaction_id;
+    const uri = "/api/testnet3/transaction/" + transaction_id;
+    try {
+      const tx_result = await axios.get(uri);
+      console.log(tx_result);
+    } catch (e) {
+      console.log(e);
+    }
+    // It should show up in unspent records as soon as program/execute resolves
+    try {
+      const unspent_records = await axios.post(
+        "/api/testnet3/records/unspent",
+        {
+          view_key: account.viewKey().to_string(),
+        }
+      );
+      console.log(unspent_records.data.records);
+    } catch (e) {
+      console.log(e);
+    }
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function set(index: number, value: string | null) {

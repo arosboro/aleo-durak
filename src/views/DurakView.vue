@@ -18,23 +18,35 @@ const pollInterval = ref(0);
 const blockHeight = ref(0);
 
 const fetchBlockHeight = async () => {
-  const response = await axios.get("/api/testnet3/latest/height");
-  blockHeight.value = response.data;
+  try {
+    const response = await axios.get("/api/testnet3/latest/height");
+    blockHeight.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const watchBlockHeight = () => {
   pollInterval.value = setInterval(async () => {
-    await fetchBlockHeight();
+    try {
+      await fetchBlockHeight();
+    } catch (error) {
+      console.log(error);
+    }
   }, 30000);
 };
 
 watch(blockHeight, async (oldBlockHeight, newBlockHeight) => {
   if (oldBlockHeight !== newBlockHeight) {
     console.log("Block height changed");
-    const response = await axios.post("/api/testnet3/records/all", {
-      view_key: account.viewKey().to_string(),
-    });
-    console.log(response);
+    try {
+      const response = await axios.post("/api/testnet3/records/all", {
+        view_key: account.viewKey().to_string(),
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   }
 });
 
