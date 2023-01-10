@@ -17,36 +17,24 @@ const account: Account = network.acc00.account;
 const pollInterval = ref(0);
 const blockHeight = ref(0);
 
-const fetchBlockHeight = () => {
-  axios
-    .get("/api/testnet3/latest/height")
-    .then((response) => {
-      blockHeight.value = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+const fetchBlockHeight = async () => {
+  const response = await axios.get("/api/testnet3/latest/height");
+  blockHeight.value = response.data;
 };
 
 const watchBlockHeight = () => {
-  pollInterval.value = setInterval(() => {
-    fetchBlockHeight();
+  pollInterval.value = setInterval(async () => {
+    await fetchBlockHeight();
   }, 30000);
 };
 
-watch(blockHeight, (oldBlockHeight, newBlockHeight) => {
+watch(blockHeight, async (oldBlockHeight, newBlockHeight) => {
   if (oldBlockHeight !== newBlockHeight) {
     console.log("Block height changed");
-    axios
-      .post("/api/testnet3/records/all", {
-        view_key: account.viewKey().to_string(),
-      })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const response = await axios.post("/api/testnet3/records/all", {
+      view_key: account.viewKey().to_string(),
+    });
+    console.log(response);
   }
 });
 
@@ -57,6 +45,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearInterval(pollInterval.value);
+  pollInterval.value = 0;
 });
 </script>
 

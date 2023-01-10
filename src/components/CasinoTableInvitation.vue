@@ -70,7 +70,7 @@ function pour(account: Account) {
     });
 }
 
-function execute() {
+async function execute() {
   const account = network.acc00.account;
   const arg0 = random_seed.value?.toString() + "u64";
   const arg1 = player01.value?.toString();
@@ -80,24 +80,26 @@ function execute() {
   const arg5 = player05.value?.toString();
   const arg6 = player06.value?.toString();
   const arg7 = player07.value?.toString();
-  // TODO: use an environment variable for uri parameter
   const transaction = {
     private_key: account.privateKey().to_string(),
     program_id: "aleo_casino_table.aleo",
     function_name: "main",
     inputs: [arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7],
-    additional_fee: 0,
   };
-  axios
-    .post("/api/testnet3/program/execute", transaction)
-    .then((res) => {
-      console.log(res);
-      // Then get the transaction and store the relevant results
-      const transaction_id = res.data.transaction_id;
-    })
-    .catch((err) => {
-      console.log(err);
+  const result = await axios.post("/api/testnet3/program/execute", transaction);
+  // Then get the transaction and store the relevant results
+  // TODO: This fails
+  // const transaction_id = result.data.transaction_id;
+  // const uri = "/api/testnet3/transaction/" + transaction_id;
+  // const tx_result = await axios.get(uri);
+  // console.log(tx_result);
+  // It should show up in unspent records as soon as program/execute resolves
+  setTimeout(async () => {
+    const unspent_records = await axios.post("/api/testnet3/records/unspent", {
+      view_key: account.viewKey().to_string(),
     });
+    console.log(unspent_records.data.records);
+  }, 1500);
 }
 
 function set(index: number, value: string | null) {
