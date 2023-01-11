@@ -40,7 +40,7 @@ watch(blockHeight, async (oldBlockHeight, newBlockHeight) => {
   if (oldBlockHeight !== newBlockHeight) {
     console.log("Block height changed");
     try {
-      const response = await axios.post("/api/testnet3/records/all", {
+      const response = await axios.post("/api/testnet3/records/unspent", {
         view_key: account.viewKey().to_string(),
       });
       console.log(response);

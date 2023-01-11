@@ -13,6 +13,7 @@ import hljsVuePlugin from "@highlightjs/vue-plugin";
 // import { Account, NodeConnection } from "@entropy1729/aleo-js";
 import axios from "axios";
 import type { Account } from "@entropy1729/aleo-js";
+import { useCasinoTableStore } from "@/stores/aleo_casino_table";
 
 // const VuePublicKeyInput = applyPureReactInVue(PublicKeyInput);
 // const VueExecuteTransactionButton = applyPureReactInVue(
@@ -22,6 +23,7 @@ import type { Account } from "@entropy1729/aleo-js";
 const highlightjs = hljsVuePlugin.component;
 
 const network = useAccountStore();
+const aleo_casino_table = useCasinoTableStore();
 const store = useTableInvitationStore();
 const player00 = ref(store.player00);
 const player01 = ref(store.player01);
@@ -55,23 +57,8 @@ const allValid = computed(() => {
   );
 });
 
-function pour(account: Account) {
-  const body = {
-    address: account.address().to_string(),
-    amount: 100,
-  };
-  axios
-    .post("/api/testnet3/faucet/pour", body)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
 async function execute() {
-  const account = network.acc00.account;
+  const account: Account = network.acc00.account;
   const arg0 = random_seed.value?.toString() + "u64";
   const arg1 = player01.value?.toString();
   const arg2 = player02.value?.toString();
@@ -94,14 +81,14 @@ async function execute() {
     console.log(result.data.transaction_id);
     // Then get the transaction and store the relevant results
     // TODO: This fails
-    const transaction_id = result.data.transaction_id;
-    const uri = "/api/testnet3/transaction/" + transaction_id;
-    try {
-      const tx_result = await axios.get(uri);
-      console.log(tx_result);
-    } catch (e) {
-      console.log(e);
-    }
+    // const transaction_id = result.data.transaction_id;
+    // const uri = "/api/testnet3/transaction/" + transaction_id;
+    // try {
+    //   const tx_result = await axios.get(uri);
+    //   console.log(tx_result);
+    // } catch (e) {
+    //   console.log(e);
+    // }
     // It should show up in unspent records as soon as program/execute resolves
     try {
       const unspent_records = await axios.post(
@@ -111,6 +98,7 @@ async function execute() {
         }
       );
       console.log(unspent_records.data.records);
+      aleo_casino_table.records.push(...unspent_records.data.records);
     } catch (e) {
       console.log(e);
     }
