@@ -1,21 +1,27 @@
 <template>
   <div class="durak">
     <h1>Дурак</h1>
-    <CasinoTableInvitation />
+    <CasinoTableInvitation v-if="!record_count" />
+    <CasinoTableGame v-if="record_count" />
   </div>
 </template>
 
 <script setup lang="ts">
 import CasinoTableInvitation from "@/components/CasinoTableInvitation.vue";
+import CasinoTableGame from "@/components/CasinoTableGame.vue";
 import { useAccountStore } from "@/stores/account";
+import { useCasinoTableStore } from "@/stores/aleo_casino_table";
 import axios from "axios";
-import { onMounted, onBeforeUnmount, ref, watch } from "vue";
+import { onMounted, onBeforeUnmount, ref, watch, computed } from "vue";
 import type { Account } from "@entropy1729/aleo-js";
 
+const CasinoTable = useCasinoTableStore();
 const network = useAccountStore();
 const account: Account = network.acc00.account;
 const pollInterval = ref(0);
 const blockHeight = ref(0);
+const txIds = ref(CasinoTable.txIds);
+const record_count = computed(() => txIds.value.length);
 
 const fetchBlockHeight = async () => {
   try {

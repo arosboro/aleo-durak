@@ -42,7 +42,7 @@ const acc05 = computed(newAccount);
 const acc06 = computed(newAccount);
 const acc07 = computed(newAccount);
 
-await pour(acc00.value.account);
+// await pour(acc00.value.account);
 
 export const useAccountStore = defineStore("accounts", () => {
   return {

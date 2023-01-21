@@ -65,3 +65,11 @@ npm run test:e2e
 ```sh
 npm run lint
 ````
+
+### Private key for use with slingshot (one time) @see package.json
+
+```
+  Private Key  APrivateKey1zkp3sB1AJEkKkUtnz7Ye8TFFZYBkabN8h7NJr1toVrbZyLR
+     View Key  AViewKey1q4U4wQYWyLBVqGUfKmu8mNZecWoNJmqaLAxsuYHabLF9
+      Address  aleo1tfqt40wwu3dpy7gqy4ns3um20m70nef3n776cmr07cnegzu54srskd0630
+```
