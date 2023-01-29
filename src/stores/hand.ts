@@ -9,7 +9,7 @@ export interface Hand extends Deck {
 }
 
 export const useHandStore = defineStore("hand", () => {
-  const cards = ref([] as CardList);
+  const cards = ref<CardList>([]);
   function play(card: Card) {
     cards.value.splice(cards.value.indexOf(card), 1);
   }

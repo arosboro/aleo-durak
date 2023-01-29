@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 // import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
 
@@ -46,8 +47,8 @@ export type CasinoTableList = {
 export type txList = string[];
 
 export const useCasinoTableStore = defineStore("CasinoTable", () => {
-  const records = {} as CasinoTableList;
-  const txIds = [] as txList;
+  const records = ref<CasinoTableList>({});
+  const txIds = ref<txList>([]);
 
   function parse_record(response: string): CasinoTableInfo {
     const record_body = response
@@ -77,8 +78,8 @@ export const useCasinoTableStore = defineStore("CasinoTable", () => {
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
       const record: CasinoTableInfo = parse_record(response[key]);
-      txIds.push(key);
-      records[key] = record;
+      txIds.value.push(key);
+      records.value[key] = record;
       // Unicode for record icon before printing record and key.
       console.log("\u{1F4C8}", key, record);
     }
