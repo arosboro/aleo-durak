@@ -384,6 +384,7 @@ button {
   color: #fff;
   font-weight: bold;
   cursor: pointer;
+  float: right;
 }
 
 button:hover {
