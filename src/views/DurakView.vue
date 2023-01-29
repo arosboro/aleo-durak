@@ -1,27 +1,26 @@
 <template>
   <div class="durak">
     <h1>Дурак</h1>
-    <CasinoTableInvitation v-if="!record_count" />
-    <CasinoTableGame v-if="record_count" />
+    <CasinoTableInvitation key="txIds.length" v-if="!txIds.length" />
+    <CasinoTableGame key="txIds.length" v-if="txIds.length" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import CasinoTableInvitation from "@/components/CasinoTableInvitation.vue";
 import CasinoTableGame from "@/components/CasinoTableGame.vue";
 import { useAccountStore } from "@/stores/account";
 import { useCasinoTableStore } from "@/stores/aleo_casino_table";
 import axios from "axios";
-import { onMounted, onBeforeUnmount, ref, watch, computed } from "vue";
-import type { Account } from "@entropy1729/aleo-js";
+import { onMounted, onBeforeUnmount, ref, watch } from "vue";
 
-const CasinoTable = useCasinoTableStore();
-const network = useAccountStore();
-const account: Account = network.acc00.account;
+const casinoTableStore = useCasinoTableStore();
+const accountStore = useAccountStore();
+const { acc00 } = storeToRefs(accountStore);
+const { txIds } = storeToRefs(casinoTableStore);
 const pollInterval = ref(0);
 const blockHeight = ref(0);
-const txIds = ref(CasinoTable.txIds);
-const record_count = computed(() => txIds.value.length);
 
 const fetchBlockHeight = async () => {
   try {
@@ -47,7 +46,7 @@ watch(blockHeight, async (oldBlockHeight, newBlockHeight) => {
     console.log("Block height changed");
     try {
       const response = await axios.post("/api/testnet3/records/unspent", {
-        view_key: account.viewKey().to_string(),
+        view_key: acc00.value.account.viewKey().to_string(),
       });
       console.log(response);
     } catch (error) {
