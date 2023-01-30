@@ -48,7 +48,9 @@ watch(blockHeight, async (oldBlockHeight, newBlockHeight) => {
       const response = await axios.post("/api/testnet3/records/unspent", {
         view_key: acc00.value.viewKey().to_string(),
       });
-      console.log(response);
+      // The keys are hashes, (field values) in string format
+      // Each record is JSON format of a serialized aleo_casino_table.aleo/CasinoTable.record
+      casinoTableStore.consume(response.data.records);
     } catch (error) {
       console.log(error);
     }
