@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { storeToRefs } from "pinia";
 import { useAccountStore } from "@/stores/account";
 import { useTableInvitationStore } from "@/stores/table_invitation";
 import IconFlame from "./icons/IconFlame.vue";
@@ -12,7 +13,6 @@ import hljsVuePlugin from "@highlightjs/vue-plugin";
 // import { applyPureReactInVue } from "veaury";
 // import { Account, NodeConnection } from "@entropy1729/aleo-js";
 import axios from "axios";
-import type { Account } from "@entropy1729/aleo-js";
 import { useCasinoTableStore } from "@/stores/aleo_casino_table";
 
 // const VuePublicKeyInput = applyPureReactInVue(PublicKeyInput);
@@ -22,28 +22,41 @@ import { useCasinoTableStore } from "@/stores/aleo_casino_table";
 
 const highlightjs = hljsVuePlugin.component;
 
-const network = useAccountStore();
+const accountStore = useAccountStore();
 const aleo_casino_table = useCasinoTableStore();
-const store = useTableInvitationStore();
-const player00 = ref(store.player00);
-const player01 = ref(store.player01);
-const player02 = ref(store.player02);
-const player03 = ref(store.player03);
-const player04 = ref(store.player04);
-const player05 = ref(store.player05);
-const player06 = ref(store.player06);
-const player07 = ref(store.player07);
+const tableInvitationStore = useTableInvitationStore();
+const {
+  player00,
+  player01,
+  player02,
+  player03,
+  player04,
+  player05,
+  player06,
+  player07,
+} = storeToRefs(tableInvitationStore);
 
-set(0, network.acc00.address.to_string());
-set(1, network.acc01.address.to_string());
-set(2, network.acc02.address.to_string());
-set(3, network.acc03.address.to_string());
-set(4, network.acc04.address.to_string());
-set(5, network.acc05.address.to_string());
-set(6, network.acc06.address.to_string());
-set(7, network.acc07.address.to_string());
+const {
+  acc00Address,
+  acc01Address,
+  acc02Address,
+  acc03Address,
+  acc04Address,
+  acc05Address,
+  acc06Address,
+  acc07Address,
+} = storeToRefs(accountStore);
 
-const random_seed = ref(store.random_seed);
+set(0, acc00Address.value.to_string());
+set(1, acc01Address.value.to_string());
+set(2, acc02Address.value.to_string());
+set(3, acc03Address.value.to_string());
+set(4, acc04Address.value.to_string());
+set(5, acc05Address.value.to_string());
+set(6, acc06Address.value.to_string());
+set(7, acc07Address.value.to_string());
+
+const random_seed = ref(tableInvitationStore.random_seed);
 
 const allValid = computed(() => {
   return (
@@ -58,7 +71,7 @@ const allValid = computed(() => {
 });
 
 async function execute() {
-  const account: Account = network.acc00.account;
+  const { acc00 } = storeToRefs(accountStore);
   const arg0 = random_seed.value?.toString() + "u64";
   const arg1 = player01.value?.toString();
   const arg2 = player02.value?.toString();
@@ -68,7 +81,7 @@ async function execute() {
   const arg6 = player06.value?.toString();
   const arg7 = player07.value?.toString();
   const transaction = {
-    private_key: account.privateKey().to_string(),
+    private_key: acc00.value.privateKey().to_string(),
     program_id: "aleo_casino_table.aleo",
     function_name: "main",
     inputs: [arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7],
@@ -99,7 +112,7 @@ async function execute() {
         const unspent_records = await axios.post(
           "/api/testnet3/records/unspent",
           {
-            view_key: account.viewKey().to_string(),
+            view_key: acc00.value.viewKey().to_string(),
           }
         );
         // The keys are hashes, (field values) in string format
@@ -118,35 +131,35 @@ async function execute() {
 function set(index: number, value: string | null) {
   switch (index) {
     case 0:
-      store.$patch({ player00: value });
+      tableInvitationStore.$patch({ player00: value });
       player00.value = value;
       break;
     case 1:
-      store.$patch({ player01: value });
+      tableInvitationStore.$patch({ player01: value });
       player01.value = value;
       break;
     case 2:
-      store.$patch({ player02: value });
+      tableInvitationStore.$patch({ player02: value });
       player02.value = value;
       break;
     case 3:
-      store.$patch({ player03: value });
+      tableInvitationStore.$patch({ player03: value });
       player03.value = value;
       break;
     case 4:
-      store.$patch({ player04: value });
+      tableInvitationStore.$patch({ player04: value });
       player04.value = value;
       break;
     case 5:
-      store.$patch({ player05: value });
+      tableInvitationStore.$patch({ player05: value });
       player05.value = value;
       break;
     case 6:
-      store.$patch({ player06: value });
+      tableInvitationStore.$patch({ player06: value });
       player06.value = value;
       break;
     case 7:
-      store.$patch({ player07: value });
+      tableInvitationStore.$patch({ player07: value });
       player07.value = value;
       break;
   }
@@ -155,28 +168,40 @@ function set(index: number, value: string | null) {
 function burnToPlayer(index: number) {
   switch (index) {
     case 2:
-      store.$patch({ player02: store.burn_address });
-      player02.value = store.burn_address;
+      tableInvitationStore.$patch({
+        player02: tableInvitationStore.burn_address,
+      });
+      player02.value = tableInvitationStore.burn_address;
       break;
     case 3:
-      store.$patch({ player03: store.burn_address });
-      player03.value = store.burn_address;
+      tableInvitationStore.$patch({
+        player03: tableInvitationStore.burn_address,
+      });
+      player03.value = tableInvitationStore.burn_address;
       break;
     case 4:
-      store.$patch({ player04: store.burn_address });
-      player04.value = store.burn_address;
+      tableInvitationStore.$patch({
+        player04: tableInvitationStore.burn_address,
+      });
+      player04.value = tableInvitationStore.burn_address;
       break;
     case 5:
-      store.$patch({ player05: store.burn_address });
-      player05.value = store.burn_address;
+      tableInvitationStore.$patch({
+        player05: tableInvitationStore.burn_address,
+      });
+      player05.value = tableInvitationStore.burn_address;
       break;
     case 6:
-      store.$patch({ player06: store.burn_address });
-      player06.value = store.burn_address;
+      tableInvitationStore.$patch({
+        player06: tableInvitationStore.burn_address,
+      });
+      player06.value = tableInvitationStore.burn_address;
       break;
     case 7:
-      store.$patch({ player07: store.burn_address });
-      player07.value = store.burn_address;
+      tableInvitationStore.$patch({
+        player07: tableInvitationStore.burn_address,
+      });
+      player07.value = tableInvitationStore.burn_address;
       break;
   }
 }
@@ -273,7 +298,7 @@ function burnToPlayer(index: number) {
           <IconFlame />
         </i>
         <input
-          @blur="set(7, player02?.toString() || '')"
+          @blur="set(7, player07?.toString() || '')"
           :id="player07?.toString()"
           type="text"
           v-model="player07"
