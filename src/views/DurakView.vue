@@ -1,25 +1,71 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="durak">
+    <h1>Дурак</h1>
+    <CasinoTableInvitation key="txIds.length" v-if="!txIds.length" />
+    <CasinoTableGame key="txIds.length" v-if="txIds.length" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs } from "vue";
-import { useTableStore } from "@/store/table";
-import { useDeckStore } from "@/store/deck";
+import { storeToRefs } from "pinia";
+import CasinoTableInvitation from "@/components/CasinoTableInvitation.vue";
+import CasinoTableGame from "@/components/CasinoTableGame.vue";
+import { useAccountStore } from "@/stores/account";
+import { useCasinoTableStore } from "@/stores/aleo_casino_table";
+import axios from "axios";
+import { onMounted, onBeforeUnmount, ref, watch } from "vue";
 
-export interface Props {
-  msg?: string;
-  labels?: string[];
-}
+const casinoTableStore = useCasinoTableStore();
+const accountStore = useAccountStore();
+const { acc00 } = storeToRefs(accountStore);
+const { txIds } = storeToRefs(casinoTableStore);
+const pollInterval = ref(0);
+const blockHeight = ref(0);
 
-const props = withDefaults(defineProps<Props>(), {
-  msg: "hello",
-  labels: () => ["one", "two"],
+const fetchBlockHeight = async () => {
+  try {
+    const response = await axios.get("/api/testnet3/latest/height");
+    blockHeight.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const watchBlockHeight = () => {
+  pollInterval.value = setInterval(async () => {
+    try {
+      await fetchBlockHeight();
+    } catch (error) {
+      console.log(error);
+    }
+  }, 30000);
+};
+
+watch(blockHeight, async (oldBlockHeight, newBlockHeight) => {
+  if (oldBlockHeight !== newBlockHeight) {
+    console.log("Block height changed");
+    try {
+      const response = await axios.post("/api/testnet3/records/unspent", {
+        view_key: acc00.value.viewKey().to_string(),
+      });
+      // The keys are hashes, (field values) in string format
+      // Each record is JSON format of a serialized aleo_casino_table.aleo/CasinoTable.record
+      casinoTableStore.consume(response.data.records);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 });
 
-const { msg, labels } = toRefs(props);
+onMounted(() => {
+  fetchBlockHeight();
+  watchBlockHeight();
+});
+
+onBeforeUnmount(() => {
+  clearInterval(pollInterval.value);
+  pollInterval.value = 0;
+});
 </script>
 
 <style>

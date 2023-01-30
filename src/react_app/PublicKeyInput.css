@@ -1,0 +1,7 @@
+.public-key-input {
+  width: 64em;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 2.5rem;
+}
